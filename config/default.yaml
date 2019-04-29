@@ -1,0 +1,3 @@
+subscriber_topic: /scan
+queue_size: 100
+

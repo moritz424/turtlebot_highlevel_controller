@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>turtlebot_highlevel_controller</name>
+  <version>0.0.0</version>
+  <description>The turtlebot_highlevel_controller package</description>
+
+  <maintainer email="moritz.ege@web.de">moritz</maintainer>
+  <license>BSD</license>
+  <!-- Github project -->
+  <url type="website">https://github.com/moritz424/turtlebot_highlevel_controller/</url>
+  <author email="moritz.ege@web.de">moritz</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>sensor_msgs</depend>
+  <depend>roscpp</depend>
+  <depend>rospy</depend>
+
+</package>
