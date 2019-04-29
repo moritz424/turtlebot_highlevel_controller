@@ -57,6 +57,9 @@ class TurtlebotHighlevelController
   //! ROS topic name to subscribe to.
   std::string subscriberTopic_;
 
+  //! Buffer size of subscriber.
+  int queueSize_;
+
   //! ROS service server.
   ros::ServiceServer serviceServer_;
 
