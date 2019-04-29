@@ -21,7 +21,7 @@ include_directories(
 )
 
 add_executable(
-	${PROJECT_NAME} src/{PROJECT_NAME}_node.cpp src/TurtlebotHighlevelController.cpp
+	${PROJECT_NAME} src/turtlebot_laserscan_range/${PROJECT_NAME}_node.cpp src/turtlebot_laserscan_range/TurtlebotHighlevelController.cpp
 )
 
 target_link_libraries(
