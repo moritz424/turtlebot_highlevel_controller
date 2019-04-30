@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <string>
-#include <sstream>
 
 namespace turtlebot_highlevel_controller {
 
@@ -37,12 +36,16 @@ class Algorithm
  private:
 
   //! Internal variable to hold the current values.
-  std::vector<float> values_;
+  std::vector<float> rawValues_;
 
   //! Index of minimum value in the data array.
   unsigned int indexOfMin_;
 
+  std::string valuesString_;
+
   float minValue_;
+
+
 };
 
 } /* namespace */
