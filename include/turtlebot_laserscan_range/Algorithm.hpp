@@ -31,7 +31,9 @@ class Algorithm
    * Get five range values around the minuimum.
    * @return the five range values of the data.
    */
-  std::string getStringValues();
+  std::string getStringValue();
+
+  float getFloatValue();
 
  private:
 
@@ -42,6 +44,7 @@ class Algorithm
   unsigned int indexOfMin_;
 
   std::string valuesString_;
+  std::string singleValueString_;
 
   float minValue_;
 
