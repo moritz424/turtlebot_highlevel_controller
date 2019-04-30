@@ -1,5 +1,9 @@
 #pragma once
 
+#include <vector>
+#include <string>
+#include <sstream>
+
 namespace turtlebot_highlevel_controller {
 
 /*!
@@ -22,21 +26,23 @@ class Algorithm
    * Set new measurement data.
    * @param data the new data.
    */
-  void setData(const float *data);
+  void setData(const std::vector<float> data);
 
   /*!
    * Get five range values around the minuimum.
    * @return the five range values of the data.
    */
-  float *getValues() const;
+  std::string getStringValues();
 
  private:
 
   //! Internal variable to hold the current values.
-  float *values_;
+  std::vector<float> values_;
 
   //! Index of minimum value in the data array.
-  unsigned int indexOfMin;
+  unsigned int indexOfMin_;
+
+  float minValue_;
 };
 
 } /* namespace */

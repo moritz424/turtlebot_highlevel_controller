@@ -32,7 +32,7 @@ void TurtlebotHighlevelController::topicCallback(const sensor_msgs::LaserScan& m
 
 bool TurtlebotHighlevelController::serviceCallback(std_srvs::Trigger::Request& request, std_srvs::Trigger::Response& response){
 	response.success = true;
-	response.message =  std::to_string(algorithm_.getValues());
+	response.message =  algorithm_.getStringValues();
 	return true; 
 };
 
