@@ -33,6 +33,7 @@ namespace turtlebot_highlevel_controller
 	void TurtlebotHighlevelController::topicCallback(const sensor_msgs::LaserScan& msg)
 	{
 		algorithm_.setData(msg.ranges);
+		ROS_INFO("Values next %f", algorithm_.getFloatValue());
 	}
 
 	bool TurtlebotHighlevelController::serviceCallback(std_srvs::Trigger::Request& request, 
