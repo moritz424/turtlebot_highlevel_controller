@@ -14,11 +14,14 @@ namespace turtlebot_highlevel_controller
 			ROS_ERROR("Could not read parameters.");
 			ros::requestShutdown();
   		}
+  		
+  		//serviceServer_ = nodeHandle_.advertiseService("get_value", &TurtlebotHighlevelController::serviceCallback, this);
+  		publisher_ = nodeHandle_.advertise<sensor_msgs::LaserScan>("scan1",queueSize_);
   		subscriber_ = nodeHandle_.subscribe(subscriberTopic_, queueSize_, 
   							&TurtlebotHighlevelController::topicCallback, this);
-  		serviceServer_ = nodeHandle_.advertiseService("get_value", &TurtlebotHighlevelController::serviceCallback, this);
-  		//publisher_
-  		ROS_INFO("Successfully launched node.");
+  		
+
+   		ROS_INFO("Successfully launched node.");
 	};
 
 	TurtlebotHighlevelController::~TurtlebotHighlevelController()
@@ -32,8 +35,10 @@ namespace turtlebot_highlevel_controller
 
 	void TurtlebotHighlevelController::topicCallback(const sensor_msgs::LaserScan& msg)
 	{
-		algorithm_.setData(msg.ranges);
-		ROS_INFO("Values next %f", algorithm_.getFloatValue());
+		//algorithm_.setData(msg.ranges);
+		ROS_INFO("ranges min value; %f", algorithm_.findMinLaserScan(msg));
+		publisher_.publish(algorithm_.getMsgLaserScan());
+		//ROS_INFO("Min value msg: %f", msg.range_min);
 	}
 
 	bool TurtlebotHighlevelController::serviceCallback(std_srvs::Trigger::Request& request, 
@@ -44,8 +49,8 @@ namespace turtlebot_highlevel_controller
 		//std::string st_ = ss.str();
 
 		response.success = true;
-		response.message =  algorithm_.getStringValue();
-		ROS_INFO("Values next %f", algorithm_.getFloatValue());
+		response.message =  std::to_string(algorithm_.getMinValueFloat());
+		
 		return true; 
 	}
 

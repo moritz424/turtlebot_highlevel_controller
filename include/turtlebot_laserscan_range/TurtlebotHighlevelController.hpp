@@ -54,7 +54,8 @@ class TurtlebotHighlevelController
   //! ROS topic subscriber.
   ros::Subscriber subscriber_;
 
-  //ros::Publisher publisher_;
+  // ROS topic publisher
+  ros::Publisher publisher_;
 
   //! ROS topic name to subscribe to.
   std::string subscriberTopic_;

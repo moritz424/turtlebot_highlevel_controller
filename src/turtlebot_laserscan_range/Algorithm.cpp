@@ -3,32 +3,39 @@
 namespace turtlebot_highlevel_controller{
 
 Algorithm::Algorithm(): 
-indexOfMin_(0), rawValues_({0.0,0.0,0.0,0.0,0.0}), minValue_(5.0), valuesString_(""), singleValueString_(""){
+indexOfMin_(0), minValue_(5.0){
 }
 
 Algorithm::~Algorithm(){
 }
 
 
-void Algorithm::setData(const std::vector<float> data){
-	for (int i = 0; i < data.size(); ++i){
-		if (data[i] < minValue_){			
+float Algorithm::findMinLaserScan(const sensor_msgs::LaserScan data){
+	
+	for (int i = 0; i < data.ranges.size(); ++i){
+		if (data.ranges[i] < minValue_){			
 			indexOfMin_ = i;
 		}
 	}
-	rawValues_ = {data[indexOfMin_-2] , data[indexOfMin_-1] ,data[indexOfMin_], data[indexOfMin_+1], data[indexOfMin_+2]};
-	singleValueString_ = std::to_string(rawValues_[2]);
+	msg = data;
+	msg.ranges = {data.ranges[indexOfMin_-2], data.ranges[indexOfMin_-1], data.ranges[indexOfMin_], data.ranges[indexOfMin_+1], data.ranges[indexOfMin_+2]};
+	
+	minValue_ = data.ranges[indexOfMin_];
+
+
+	return minValue_;
+	//singleValueString_ = std::to_string(rawValues_[2]);
 	//valuesString_ = std::to_string(rawValues_[0]) + " || " + std::to_string(rawValues_[1]) + " || " + std::to_string(rawValues_[2]) + " || " + std::to_string(rawValues_[3]) + " || " + std::to_string(rawValues_[4]); 
 }
 
-std::string Algorithm::getStringValue()
+sensor_msgs::LaserScan Algorithm::getMsgLaserScan()
 {
-	return singleValueString_;	
+	return msg;	
 }
 
-float Algorithm::getFloatValue()
+float Algorithm::getMinValueFloat()
 {
-	return rawValues_[2];
+	return minValue_;
 }
 
 } /* namespace */
