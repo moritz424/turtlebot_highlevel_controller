@@ -18,7 +18,16 @@ float Algorithm::findMinLaserScan(const sensor_msgs::LaserScan data){
 		}
 	}
 	msg = data;
-	msg.ranges = {data.ranges[indexOfMin_-2], data.ranges[indexOfMin_-1], data.ranges[indexOfMin_], data.ranges[indexOfMin_+1], data.ranges[indexOfMin_+2]};
+	
+	// oihefosahof
+
+	msg.angle_min = (data.angle_min + (indexOfMin_-2)*data.angle_increment);
+	msg.angle_max = (data.angle_min + (indexOfMin_+2)*data.angle_increment);
+
+
+
+	msg.ranges = {data.ranges[(indexOfMin_-2)],data.ranges[(indexOfMin_-1)], 
+		data.ranges[(indexOfMin_)], data.ranges[(indexOfMin_-1)], data.ranges[(indexOfMin_+2)]};
 	
 	minValue_ = data.ranges[indexOfMin_];
 
