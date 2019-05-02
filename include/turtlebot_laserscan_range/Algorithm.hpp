@@ -42,10 +42,11 @@ class Algorithm
   
   //! Index of minimum value in the data array.
   unsigned int indexOfMin_;
-
+ 
   float minValue_;
 
   sensor_msgs::LaserScan msg;
+
 
 
 };
