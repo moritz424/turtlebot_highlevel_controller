@@ -1,4 +1,6 @@
 #include <turtlebot_laserscan_range/Algorithm.hpp>
+#include <string>
+#include <sstream>
 
 namespace turtlebot_highlevel_controller{
 
@@ -10,37 +12,41 @@ Algorithm::~Algorithm(){
 }
 
 
-float Algorithm::findMinLaserScan(const sensor_msgs::LaserScan data){
+float Algorithm::findMinLaserScan(const std::vector<float> &data, long unsigned int size){
 	
-	for (int i = 0; i < data.ranges.size(); ++i){
-		if (data.ranges[i] < minValue_){			
+	minValue_ = data[0];
+	for (int i = 1; i < size; ++i){
+		if (data[i] < minValue_){
+			minValue_ = data[i];			
 			indexOfMin_ = i;
 		}
 	}
-	msg = data;
+
+	return indexOfMin_;
 	
-	// oihefosahof
-
-	msg.angle_min = (data.angle_min + (indexOfMin_-2)*data.angle_increment);
-	msg.angle_max = (data.angle_min + (indexOfMin_+2)*data.angle_increment);
-
-
-
-	msg.ranges = {data.ranges[(indexOfMin_-2)],data.ranges[(indexOfMin_-1)], 
-		data.ranges[(indexOfMin_)], data.ranges[(indexOfMin_-1)], data.ranges[(indexOfMin_+2)]};
-	
-	minValue_ = data.ranges[indexOfMin_];
-
-
-	return minValue_;
-	//singleValueString_ = std::to_string(rawValues_[2]);
-	//valuesString_ = std::to_string(rawValues_[0]) + " || " + std::to_string(rawValues_[1]) + " || " + std::to_string(rawValues_[2]) + " || " + std::to_string(rawValues_[3]) + " || " + std::to_string(rawValues_[4]); 
 }
 
-sensor_msgs::LaserScan Algorithm::getMsgLaserScan()
-{
-	return msg;	
+std::vector<float> Algorithm::getMsgLaserScan(const std::vector<float> &data, long unsigned int size, float min_index){
+	min_array.resize(5);
+	intens_array.resize(5);
+	for(int p=0;p<5;p++){
+        if (((min_index+3-(5-p)))<0 || (min_index+3-(5-p))>size){
+        min_array[p] = 5;
+        intens_array[p] = 0;
+        }
+        else {
+        min_array[p] = data[(min_index+3-(5-p))];
+        intens_array[p] = 1;
+        }
+    }
+	return min_array;
 }
+
+std::vector<float> Algorithm::getIntensLaserScan(){
+	return intens_array;
+}
+
+
 
 float Algorithm::getMinValueFloat()
 {

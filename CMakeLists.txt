@@ -6,7 +6,7 @@ add_definitions(-std=c++11)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(
-  catkin REQUIRED COMPONENTS roscpp rospy sensor_msgs
+  catkin REQUIRED COMPONENTS roscpp rospy sensor_msgs tf
 )
 
 ## Find system libraries
