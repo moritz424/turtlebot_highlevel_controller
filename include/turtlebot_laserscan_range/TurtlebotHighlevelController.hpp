@@ -56,6 +56,9 @@ class TurtlebotHighlevelController
   tf::TransformListener tf_listen_robo_world;
   tf::StampedTransform transform_robo_world;
 
+  geometry_msgs::PointStamped odom_point;
+  geometry_msgs::PointStamped laser_point;
+
    /*!
    * ROS service server callback.
    * @param request the request of the service.
