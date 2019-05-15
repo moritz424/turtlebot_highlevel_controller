@@ -52,14 +52,12 @@ namespace turtlebot_highlevel_controller
 		ROS_INFO("Distance: %f ,  Angle: %f", min_dist, angle_to_min);
 		publisher_.publish(min_msg);
 
-		//Pfeilerposition aus Robosicht: Point Message
-		saeule_robo.header.frame_id = "base_laser_link";
-		saeule_robo.header.stamp = ros::Time();
-		saeule_robo.point.x = (cos(angle_to_min)*min_dist)+0.1;
-		saeule_robo.point.y = sin(angle_to_min)*min_dist;
-		saeule_robo.point.z = 0;
+		//Pfeilerposition aus Robosicht: (Ortsvektor)
+		r_pfeiler_robo[0] = cos(angle_to_min)*min_dist+0.1; // x
+		r_pfeiler_robo[1] = sin(angle_to_min)*min_dist; // y
+		r_pfeiler_robo[2] = -0.29; //z
+		r_pfeiler_robo[3] = 1; // 4. Element für Transormationsmatrixmulitplikation 1=Ortsvektor
 
-		// Init Twist Message
 		move_msg.linear.z, move_msg.linear.y = 0;
 		move_msg.angular.x, move_msg.angular.y = 0;
 
@@ -81,22 +79,53 @@ namespace turtlebot_highlevel_controller
 		}
 		publisher_twist.publish(move_msg);
 
-		// TF2 Message (geometry_msgs/TransformStamped) Robo-Odom empfangen
-		//tf2_ros::TransformListener tf_listen_robo_world(tfBuffer);
+		// TF Message Robo-Odom empfangen
 		try{
-		 tf_listen_robo_world.transformPoint("odom", saeule_robo, saeule_odom);
-         //transform_robo_world = tfBuffer.lookupTransform("base_laser_link", "odom", ros::Time(0));
+        tf_listen_robo_world.lookupTransform("/base_laser_link", "/odom",  
+                               ros::Time(0), transform_robo_world);
         }
-        catch (tf2::TransformException &ex) {
-         ROS_WARN("%s",ex.what());
-         ros::Duration(1.0).sleep();
+        catch (tf::TransformException ex){
+        ROS_ERROR("%s",ex.what());
+        ros::Duration(1.0).sleep();
         }
-
         // Tranformation
-        //tf2::doTransform(saeule_robo, saeule_odom, transform_robo_world);
+        //Quaternionen auf Rotation um z rechnen:
+        float x,y = 0;
+	    float w = transform_robo_world.getRotation().w();
+	    float z = transform_robo_world.getRotation().z();
+		double siny_cosp = +2.0 * (w * z + x * y);
+		double cosy_cosp = +1.0 - 2.0 * (y * y + z * z);
+		float yaw = atan2(siny_cosp, cosy_cosp);
+
+        // Transformationsmatrix erstellen
+        T_ol[0][0] = cos(yaw);
+        T_ol[0][1] = -sin(yaw);
+        T_ol[0][2] = 0;
+        T_ol[0][3] = transform_robo_world.getOrigin().x(); // x distanz
+        T_ol[1][0] = sin(yaw);
+        T_ol[1][1] = cos(yaw);
+        T_ol[1][2] = 0;
+        T_ol[1][3] = transform_robo_world.getOrigin().y(); // y distanz
+        T_ol[2][0] = 0;
+        T_ol[2][1] = 0;
+        T_ol[2][2] = 1;
+        T_ol[2][3] = transform_robo_world.getOrigin().z(); // z distanz
+        T_ol[3][0] = 0;
+        T_ol[3][1] = 0;
+        T_ol[3][2] = 0;
+        T_ol[3][3] = 1;
+
+        //ROS_INFO("x: %f ,  y: %f", r_pfeiler_robo[0], r_pfeiler_robo[1]);
+        // Neuer Ortsvektor im Odom-System berechnen
+        for(int row=0;row<=3;row++){
+        	r_pfeiler_odom[row]=((T_ol[row][0]*r_pfeiler_robo[0])
+        							+(T_ol[row][1]*r_pfeiler_robo[1])
+        							+(T_ol[row][2]*r_pfeiler_robo[2])
+        							+(T_ol[row][3]*r_pfeiler_robo[3]));
+        }
         
-		//Marker1 init: (Marker für die Visualisierung der Säule in RViz)
-		marker1.header.frame_id = "odom"; //"base_laser_link"; 
+		//Marker1 init:
+		marker1.header.frame_id = "base_laser_link"; //"odom"
 		marker1.header.stamp = ros::Time();
 		marker1.ns = "turtlebot_highlevel_controller";
 		marker1.id = 1;
@@ -114,16 +143,14 @@ namespace turtlebot_highlevel_controller
 		marker1.color.g = 0.5;
 		marker1.color.b = 0.5;
 		// Marker 
-		marker1.pose.position.x = saeule_odom.point.x;
-		marker1.pose.position.y = saeule_odom.point.y;
-		marker1.pose.position.z = saeule_odom.point.z;
-		//marker1.pose.position.x = saeule_robo.x;
-		//marker1.pose.position.y = saeule_robo.y;
-		//marker1.pose.position.z = saeule_robo.z;
+		marker1.pose.position.x = r_pfeiler_robo[0];
+		marker1.pose.position.y = r_pfeiler_robo[1];
+		marker1.pose.position.z = r_pfeiler_robo[2];
+		//marker1.pose.position.x = r_pfeiler_odom[0];
+		//marker1.pose.position.y = r_pfeiler_odom[1];
+		//marker1.pose.position.z = r_pfeiler_odom[2];
 		vis_pub.publish(marker1);
-		//ROS_INFO("x: %f , y: %f,  z: %f", saeule_odom.x, saeule_odom.y, saeule_odom.z);
-		//ROS_INFO("tr_x: %f , tr_y: %f,  tr_z: %f", transform_robo_world.getOrigin().x(), 
-		//	transform_robo_world.getOrigin().y(), transform_robo_world.getOrigin().z());
+
 	}
 
 	bool TurtlebotHighlevelController::serviceCallback(std_srvs::Trigger::Request& request, 
