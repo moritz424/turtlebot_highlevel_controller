@@ -52,6 +52,16 @@ class TurtlebotHighlevelController
   tf2_ros::Buffer tfBuffer;
   //geometry_msgs::TransformStamped transform_robo_world;
 
+
+  tf::TransformListener tfListener;
+  
+  /*!
+   * Matrices for transformation from laser to odom
+   */
+   // float roundMarkerLaser[3];
+   // float roundMarkerOdom[3];
+   // float transMatrixLaOd[3][3];
+
  private:
   /*!
    * Reads and verifies the ROS parameters.
@@ -80,19 +90,20 @@ class TurtlebotHighlevelController
    * @param response the provided response.
    * @return true if successful, false otherwise.
    */
-  bool serviceCallback(std_srvs::Trigger::Request& request,
-                       std_srvs::Trigger::Response& response);
+  //bool serviceCallback(std_srvs::Trigger::Request& request,
+  //                     std_srvs::Trigger::Response& response);
 
   //! ROS node handle.
   ros::NodeHandle& nodeHandle_;
 
   //! ROS topic subscriber.
-  ros::Subscriber subscriber_;
+  ros::Subscriber scanSubscriber_;
 
-  // ROS topic publisher
+  // ROS topic publish
   ros::Publisher publisher_;
   ros::Publisher publisher_twist;
   ros::Publisher vis_pub; 
+
 
   //! ROS topic name to subscribe to.
   std::string subscriberTopic_;
@@ -101,8 +112,26 @@ class TurtlebotHighlevelController
   int queueSize_;
   float kp_;  // Verstaerkungsfaktor p-Regler
 
+  //! Controller parameters
+  float kVel_;
+  float kAng_;
+
+  // Variables for minimum of laser scan
+  int indexMin;
+  float angleMinLaser;
+  float distMinLaser;
+
+  // Variables for matrix transformation
+  sensor_msgs::LaserScan laserMsg;
+  geometry_msgs::Twist twistMsg;
+  visualization_msgs::Marker markerMsg;
+  
+ 
+  geometry_msgs::PointStamped pointOdom;
+  geometry_msgs::PointStamped pointLaser;
+
   //! ROS service server.
-  ros::ServiceServer serviceServer_;
+  //ros::ServiceServer serviceServer_;
 
   //! Algorithm computation object.
   Algorithm algorithm_;

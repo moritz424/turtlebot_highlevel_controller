@@ -16,12 +16,13 @@ namespace turtlebot_highlevel_controller
 			ros::requestShutdown();
   		}
   		
+
   		publisher_ = nodeHandle_.advertise<sensor_msgs::LaserScan>("scan1",queueSize_);
   		publisher_twist = nodeHandle_.advertise<geometry_msgs::Twist>("teleop",queueSize_);
   		subscriber_ = nodeHandle_.subscribe(subscriberTopic_, queueSize_, 
   							&TurtlebotHighlevelController::topicCallback, this);
   		vis_pub = nodeHandle_.advertise<visualization_msgs::Marker>("Saeule_marker", 0);
-  		
+
 
    		ROS_INFO("Successfully launched node.");
 	};
@@ -33,12 +34,15 @@ namespace turtlebot_highlevel_controller
 	{
 		if (!(nodeHandle_.getParam("subscriber_topic", subscriberTopic_) 
 			&& nodeHandle_.getParam("queue_size",queueSize_)
+
 			&& nodeHandle_.getParam("kp",kp_))) return false;
+
 		return true;
 	}
 
 	void TurtlebotHighlevelController::topicCallback(const sensor_msgs::LaserScan& msg)
 	{
+
 		size = msg.ranges.size();
 		min_index = algorithm_.findMinLaserScan(msg.ranges, size);
 		min_dist = msg.ranges[min_index];
@@ -126,17 +130,17 @@ namespace turtlebot_highlevel_controller
 		//	transform_robo_world.getOrigin().y(), transform_robo_world.getOrigin().z());
 	}
 
-	bool TurtlebotHighlevelController::serviceCallback(std_srvs::Trigger::Request& request, 
-														std_srvs::Trigger::Response& response)
-	{
-		//std::stringstream ss;
-		//ss.str(algorithm_.getStringValue);
-		//std::string st_ = ss.str();
+	//bool TurtlebotHighlevelController::serviceCallback(std_srvs::Trigger::Request& request, 
+	//   												std_srvs::Trigger::Response& response)
+	//{
+	//	std::stringstream ss;
+	//	ss.str(algorithm_.getStringValue);
+	//	std::string st_ = ss.str();
 
-		response.success = true;
-		response.message =  std::to_string(algorithm_.getMinValueFloat());
+	//	response.success = true;
+	//	response.message =  std::to_string(algorithm_.getMinValueFloat());
 		
-		return true; 
-	}
+	//	return true; 
+	//}
 
 } /* namespace */

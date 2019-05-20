@@ -7,6 +7,7 @@ add_definitions(-std=c++11)
 ## is used, also find other catkin packages
 find_package(
   catkin REQUIRED COMPONENTS roscpp rospy sensor_msgs tf
+
 )
 
 ## Find system libraries
@@ -21,7 +22,7 @@ catkin_package(
 )
 
 #
-#  BUILD  #
+#  BUILD  ##
 #
 
 
