@@ -79,7 +79,7 @@ class TurtlebotHighlevelController
   ros::Subscriber scanSubscriber_;
 
   // ROS topic publisher
-  // ros::Publisher laserPublisher_; // currently not neccessary
+  ros::Publisher laserPublisher_; // currently not neccessary
   ros::Publisher twistPublisher_;
   ros::Publisher markerPublisher_;
 

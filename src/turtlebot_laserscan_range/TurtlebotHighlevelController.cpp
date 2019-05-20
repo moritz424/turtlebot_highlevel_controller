@@ -18,8 +18,8 @@ namespace turtlebot_highlevel_controller
   		/*
   		 * Generate publishers
   		 */
-  		//laserPublisher_ 	= nodeHandle_.advertise<sensor_msgs::LaserScan>("mod_scan",queueSize_);
-  		twistPublisher_ 	= nodeHandle_.advertise<geometry_msgs::Twist>("teleop",queueSize_);
+  		laserPublisher_ 	= nodeHandle_.advertise<sensor_msgs::LaserScan>("mod_scan",queueSize_);
+  		twistPublisher_ 	= nodeHandle_.advertise<geometry_msgs::Twist>("cmd_vel",queueSize_);
   		markerPublisher_ 	= nodeHandle_.advertise<visualization_msgs::Marker>("min_marker",queueSize_);
 
   		/*
@@ -59,15 +59,15 @@ namespace turtlebot_highlevel_controller
 		pointLaser.point.z = 0; 
 
 		// Init twist message
-		twistMsg.linear.y, twistMsg.linear.z = 0;
-		twistMsg.angular.x, twistMsg.angular.y = 0; 
+		twistMsg.linear.y, twistMsg.linear.z = 0.0;
+		twistMsg.angular.x, twistMsg.angular.y = 0.0; 
 
 		// Controller
 			if(distMinLaser == 5)
 		{
 			//searching for pillar
-			twistMsg.linear.x = 0.3;
-			twistMsg.angular.z = 0.2;
+			twistMsg.linear.x = 0.5;
+			twistMsg.angular.z = 0.5;
 			ROS_INFO("Searching...");
 		}
 
