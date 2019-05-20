@@ -1,3 +1,5 @@
 subscriber_topic: /scan
 queue_size: 100
+k_vel: 2
+k_ang: 0.9
 

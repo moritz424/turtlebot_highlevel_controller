@@ -6,6 +6,20 @@
 #include <ros/ros.h>
 #include <sensor_msgs/LaserScan.h>
 #include <std_srvs/Trigger.h>
+#include <geometry_msgs/Twist.h>
+#include <geometry_msgs/Point.h>
+#include <math.h>
+#include <visualization_msgs/Marker.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2_ros/transform_listener.h>
+#include <tf2/buffer_core.h>
+#include <geometry_msgs/TransformStamped.h>
+#include <tf2/convert.h>
+#include <tf2/transform_datatypes.h>
+#include <tf2_ros/message_filter.h>
+#include <tf/tf.h>
+#include <tf/transform_listener.h>
+
 
 namespace turtlebot_highlevel_controller {
 
@@ -26,6 +40,16 @@ class TurtlebotHighlevelController
    */
   virtual ~TurtlebotHighlevelController();
 
+
+  tf::TransformListener tfListener;
+  
+  /*!
+   * Matrices for transformation from laser to odom
+   */
+   // float roundMarkerLaser[3];
+   // float roundMarkerOdom[3];
+   // float transMatrixLaOd[3][3];
+
  private:
   /*!
    * Reads and verifies the ROS parameters.
@@ -45,17 +69,19 @@ class TurtlebotHighlevelController
    * @param response the provided response.
    * @return true if successful, false otherwise.
    */
-  bool serviceCallback(std_srvs::Trigger::Request& request,
-                       std_srvs::Trigger::Response& response);
+  //bool serviceCallback(std_srvs::Trigger::Request& request,
+  //                     std_srvs::Trigger::Response& response);
 
   //! ROS node handle.
   ros::NodeHandle& nodeHandle_;
 
   //! ROS topic subscriber.
-  ros::Subscriber subscriber_;
+  ros::Subscriber scanSubscriber_;
 
   // ROS topic publisher
-  ros::Publisher publisher_;
+  // ros::Publisher laserPublisher_; // currently not neccessary
+  ros::Publisher twistPublisher_;
+  ros::Publisher markerPublisher_;
 
   //! ROS topic name to subscribe to.
   std::string subscriberTopic_;
@@ -63,8 +89,26 @@ class TurtlebotHighlevelController
   //! Buffer size of subscriber.
   int queueSize_;
 
+  //! Controller parameters
+  float kVel_;
+  float kAng_;
+
+  // Variables for minimum of laser scan
+  int indexMin;
+  float angleMinLaser;
+  float distMinLaser;
+
+  // Variables for matrix transformation
+  sensor_msgs::LaserScan laserMsg;
+  geometry_msgs::Twist twistMsg;
+  visualization_msgs::Marker markerMsg;
+  
+ 
+  geometry_msgs::PointStamped pointOdom;
+  geometry_msgs::PointStamped pointLaser;
+
   //! ROS service server.
-  ros::ServiceServer serviceServer_;
+  //ros::ServiceServer serviceServer_;
 
   //! Algorithm computation object.
   Algorithm algorithm_;
