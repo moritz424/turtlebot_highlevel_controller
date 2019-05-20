@@ -2,7 +2,6 @@
 #include <string>
 #include <sstream>
 
-
 namespace turtlebot_highlevel_controller{
 
 Algorithm::Algorithm(): 
@@ -53,6 +52,5 @@ float Algorithm::getMinValueFloat()
 {
 	return minValue_;
 }
-
 
 } /* namespace */

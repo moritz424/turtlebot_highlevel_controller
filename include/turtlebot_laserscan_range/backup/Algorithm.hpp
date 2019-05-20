@@ -4,8 +4,6 @@
 #include <string>
 #include <sensor_msgs/LaserScan.h>
 
-//using std::vector;
-
 namespace turtlebot_highlevel_controller {
 
 /*!
@@ -25,7 +23,7 @@ class Algorithm
   virtual ~Algorithm();
 
   /*!
-  * Set new measurement data.
+   * Set new measurement data.
    * @param data the new data.
    */
   float findMinLaserScan(const std::vector<float> &data, long unsigned int size);
@@ -40,16 +38,16 @@ class Algorithm
   std::vector<float> getIntensLaserScan();
   float getMinValueFloat();
 
-
  private:
 
-   
+  //! Internal variable to hold the current values.
+  
   //! Index of minimum value in the data array.
+  unsigned int indexOfMin_;
+ 
   float minValue_;
 
-
   
-
 
 
 
