@@ -10,108 +10,100 @@
 #include <geometry_msgs/Point.h>
 #include <math.h>
 #include <visualization_msgs/Marker.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <tf2_ros/transform_listener.h>
-#include <tf2/buffer_core.h>
-#include <geometry_msgs/TransformStamped.h>
-#include <tf2/convert.h>
-#include <tf2/transform_datatypes.h>
-#include <tf2_ros/message_filter.h>
-#include <tf/tf.h>
-#include <tf/transform_listener.h>
+
+#include "tf2_ros/buffer.h"
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 
-namespace turtlebot_highlevel_controller {
 
-/*!
- * Main class for the node to handle the ROS interfacing.
- */
-class TurtlebotHighlevelController
+namespace turtlebot_highlevel_controller 
 {
- public:
   /*!
-   * Constructor.
-   * @param nodeHandle the ROS node handle.
+   * Main class for the node to handle the ROS interfacing.
    */
-  TurtlebotHighlevelController(ros::NodeHandle& nodeHandle);
+  class TurtlebotHighlevelController
+  {
+   public:
+    /*!
+     * Constructor.
+     * @param nodeHandle the ROS node handle.
+     */
+    TurtlebotHighlevelController(ros::NodeHandle& nodeHandle);
 
-  /*!
-   * Destructor.
-   */
-  virtual ~TurtlebotHighlevelController();
+    /*!
+     * Destructor.
+     */
+    virtual ~TurtlebotHighlevelController();
+      
+   
+    // Declare buffer and listener
+   tf2_ros::Buffer tfBuffer;
+   tf2_ros::TransformListener tfListener;
+    
+    
+
+    //geometry_msgs::StampedTransform stampTrans;
+    geometry_msgs::TransformStamped transformStamped;
+
+    //
+    geometry_msgs::PointStamped laserPointStamped;
+    geometry_msgs::PointStamped odomPointStamped;
+
+    // ROS topic publisher
+    ros::Publisher scanPublisher_;
+    ros::Publisher twistPublisher_;
+    ros::Publisher visPublisher_; 
+
+   private:
 
 
-  tf::TransformListener tfListener;
-  
-  /*!
-   * Matrices for transformation from laser to odom
-   */
-   // float roundMarkerLaser[3];
-   // float roundMarkerOdom[3];
-   // float transMatrixLaOd[3][3];
+     //! ROS node handle.
+    ros::NodeHandle& nodeHandle_;
 
- private:
-  /*!
-   * Reads and verifies the ROS parameters.
-   * @return true if successful.
-   */
-  bool readParameters();
+    //! ROS topic subscriber.
+    ros::Subscriber scanSubscriber_;
 
-  /*!
-   * ROS topic callback method.
-   * @param message the received message.
-   */
-  void topicCallback(const sensor_msgs::LaserScan& msg);
+    
 
-  /*!
-   * ROS service server callback.
-   * @param request the request of the service.
-   * @param response the provided response.
-   * @return true if successful, false otherwise.
-   */
-  //bool serviceCallback(std_srvs::Trigger::Request& request,
-  //                     std_srvs::Trigger::Response& response);
+        //! ROS topic name to subscribe to.
+    std::string subscriberTopic_;
 
-  //! ROS node handle.
-  ros::NodeHandle& nodeHandle_;
+    
 
-  //! ROS topic subscriber.
-  ros::Subscriber scanSubscriber_;
+    //! Buffer size of subscriber.
+    int queueSize_;
+    float kang_;  // Verstaerkungsfaktor p-Regler
+    float kvel_;
 
-  // ROS topic publisher
-  ros::Publisher laserPublisher_; // currently not neccessary
-  ros::Publisher twistPublisher_;
-  ros::Publisher markerPublisher_;
+    /*!
+     * Reads and verifies the ROS parameters.
+     * @return true if successful.
+     */
+    bool readParameters();
 
-  //! ROS topic name to subscribe to.
-  std::string subscriberTopic_;
+    /*!
+     * ROS topic callback method.
+     * @param message the received message.
+     */
+    void topicCallback(const sensor_msgs::LaserScan& msg);
 
-  //! Buffer size of subscriber.
-  int queueSize_;
+    /*!
+     * Variables for finding minimum of laser scan data array
+     */
+    int minIndex;
+    float minAngle;
+    float minDist;
+    sensor_msgs::LaserScan minScanMsg;
+    geometry_msgs::Twist controllerTwistMsg;
+    visualization_msgs::Marker minMarkerMsg;
 
-  //! Controller parameters
-  float kVel_;
-  float kAng_;
+     //! ROS service server.
+    //ros::ServiceServer serviceServer_;
 
-  // Variables for minimum of laser scan
-  int indexMin;
-  float angleMinLaser;
-  float distMinLaser;
+    //! Algorithm computation object.
+    Algorithm algorithm_;
 
-  // Variables for matrix transformation
-  sensor_msgs::LaserScan laserMsg;
-  geometry_msgs::Twist twistMsg;
-  visualization_msgs::Marker markerMsg;
-  
- 
-  geometry_msgs::PointStamped pointOdom;
-  geometry_msgs::PointStamped pointLaser;
-
-  //! ROS service server.
-  //ros::ServiceServer serviceServer_;
-
-  //! Algorithm computation object.
-  Algorithm algorithm_;
-};
+  };
 
 } /* namespace */

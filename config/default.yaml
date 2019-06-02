@@ -1,5 +1,5 @@
 subscriber_topic: /scan
 queue_size: 100
-k_vel: 2
-k_ang: 0.9
 
+kVel: 0.5
+kAng: 1.5

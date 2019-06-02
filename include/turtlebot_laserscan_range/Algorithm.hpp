@@ -1,5 +1,5 @@
 #pragma once
-
+#include <ros/ros.h>
 #include <vector>
 #include <string>
 #include <sensor_msgs/LaserScan.h>
@@ -25,21 +25,40 @@ class Algorithm
   virtual ~Algorithm();
 
   /*!
-   *
+   * Set new measurement data.
+   * @param data the new data.
    */
-  
-  float findMinValue(const std::vector<float> data);
-  unsigned int findMinIndex(const std::vector<float> data);
+  float findMinLaserScan(const std::vector<float> data);
 
-  
+  /*!
+   * Get five range values around the minuimum.
+   * @return the five range values of the data.
+   */
+  std::vector<float> getMsgLaserScan(const std::vector<float> data);
 
+  /*!
+   * Get five intensity values around the minuimum.
+   * @return the five intensity values of the data.
+   */
+  std::vector<float> getIntensLaserScan();
+  
+  /*!
+   * Declaration of vectors for minimum (ranges 
+   * and intensities) of the laser scan data array
+   */
+  std::vector<float> min_array;
+  std::vector<float> intens_array;
+  
  private:
 
    
-  //! Index of minimum value in the data array.
+  /*! 
+   * Declare Variables that contain index and value of 
+   * the minimum range in the laser scan data array
+   */
   float minValue_;
-  unsigned int indexOfMin_;
-  
+  float indexOfMin_;
+
 };
 
 } /* namespace */

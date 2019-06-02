@@ -4,30 +4,25 @@
 #include <string>
 #include <sstream>
 
+
 namespace turtlebot_highlevel_controller 
 {
 	TurtlebotHighlevelController::TurtlebotHighlevelController(ros::NodeHandle& nodeHandle)
-		: nodeHandle_(nodeHandle) 
+		: nodeHandle_(nodeHandle), tfListener(tfBuffer)
 	{
   		if(!readParameters()) 
   		{
 			ROS_ERROR("Could not read parameters.");
 			ros::requestShutdown();
   		}
+  		//minMarkerMsg.header.frame_id = ros::topic::waitForMessage('odom');
   		
-  		/*
-  		 * Generate publishers
-  		 */
-  		laserPublisher_ 	= nodeHandle_.advertise<sensor_msgs::LaserScan>("mod_scan",queueSize_);
-  		twistPublisher_ 	= nodeHandle_.advertise<geometry_msgs::Twist>("cmd_vel",queueSize_);
-  		markerPublisher_ 	= nodeHandle_.advertise<visualization_msgs::Marker>("min_marker",queueSize_);
-
-  		/*
-  		 * Generate subsribers
-  		 */
-  		scanSubscriber_ = nodeHandle_.subscribe(subscriberTopic_, queueSize_, 
-  											&TurtlebotHighlevelController::topicCallback, this);
-  		
+  		scanPublisher_ = nodeHandle_.advertise<sensor_msgs::LaserScan>("scan1",queueSize_);
+  		twistPublisher_ = nodeHandle_.advertise<geometry_msgs::Twist>("/cmd_vel_mux/input/teleop",queueSize_);
+  		visPublisher_ = nodeHandle_.advertise<visualization_msgs::Marker>("min_marker", 0);
+		
+		scanSubscriber_ = nodeHandle_.subscribe(subscriberTopic_, queueSize_, 
+  							&TurtlebotHighlevelController::topicCallback, this);
 
    		ROS_INFO("Successfully launched node.");
 	};
@@ -39,93 +34,113 @@ namespace turtlebot_highlevel_controller
 	{
 		if (!(nodeHandle_.getParam("subscriber_topic", subscriberTopic_) 
 			&& nodeHandle_.getParam("queue_size",queueSize_)
-			&& nodeHandle_.getParam("k_vel",kVel_)
-			&& nodeHandle_.getParam("k_ang",kAng_))) return false;
+			&& nodeHandle_.getParam("kAng",kang_)
+			&& nodeHandle_.getParam("kVel",kvel_))) return false;
+
 		return true;
 	}
 
 	void TurtlebotHighlevelController::topicCallback(const sensor_msgs::LaserScan& msg)
 	{
-		//algorithm_.setData(msg.ranges);
-		indexMin = algorithm_.findMinIndex(msg.ranges); 
-		angleMinLaser = msg.angle_min + indexMin * msg.angle_increment;
-		distMinLaser = msg.ranges[indexMin];
-		ROS_INFO("Minimal distance: %f",distMinLaser);
-		// Marker position in laser coordinates
-		pointLaser.header.frame_id = "base_laser_link";
-		pointLaser.header.stamp = ros::Time();
-		pointLaser.point.x = cos(angleMinLaser) * distMinLaser;
-		pointLaser.point.y = sin(angleMinLaser) * distMinLaser;
-		pointLaser.point.z = 0; 
 
-		// Init twist message
-		twistMsg.linear.y, twistMsg.linear.z = 0.0;
-		twistMsg.angular.x, twistMsg.angular.y = 0.0; 
+		minIndex = algorithm_.findMinLaserScan(msg.ranges);
+		minDist = msg.ranges[minIndex];
+		minScanMsg = msg;
+		minScanMsg.angle_min = msg.angle_min+((minIndex-2)*msg.angle_increment);
+  		minScanMsg.angle_max = msg.angle_min+(5*msg.angle_increment);
+		minScanMsg.ranges = algorithm_.getMsgLaserScan(msg.ranges);
+		minScanMsg.intensities = algorithm_.getIntensLaserScan();
 
-		// Controller
-			if(distMinLaser == 5)
+		minAngle = msg.angle_min+((minIndex)*msg.angle_increment);
+		//ROS_INFO("Distance: %f ,  Angle: %f", minDist, minAngle);
+		scanPublisher_.publish(minScanMsg);
+
+		//Pfeilerposition aus Robosicht: Point Message
+		laserPointStamped.header.frame_id = "base_laser_link";
+		laserPointStamped.header.stamp = ros::Time();
+		laserPointStamped.point.x = (cos(minAngle)*minDist)+0.1;
+		laserPointStamped.point.y = sin(minAngle)*minDist;
+		laserPointStamped.point.z = 0;
+
+		controllerTwistMsg.linear.y, controllerTwistMsg.linear.z = 0, controllerTwistMsg.angular.y,controllerTwistMsg.angular.x = 0;
+
+		// Regler für Bewegung auf Pfeiler
+		// Pfeiler gefunden und diesen anfahren
+		if ((minDist < 5)&&(minDist > 0.4))
 		{
-			//searching for pillar
-			twistMsg.linear.x = 0.5;
-			twistMsg.angular.z = 0.5;
-			ROS_INFO("Searching...");
+			//ROS_INFO("pfeiler");
+			controllerTwistMsg.linear.x = kvel_ * minDist;
+			controllerTwistMsg.angular.z = kang_ * minAngle; //kp_ = p Verstaerkungsfaktor
 		}
-
-		if((distMinLaser < 5) && (distMinLaser > 0.3))
+		// Vor dem Pfeiler anhalten und drehen
+		else if (minDist <= 0.4)
 		{
-			//pillar found -> controller active
-			twistMsg.linear.x = kVel_ * distMinLaser;
-			twistMsg.angular.z = kAng_ * angleMinLaser;
-			ROS_INFO("Controlling...");
+			//ROS_INFO("drehen");
+			controllerTwistMsg.linear.x = 0;
+			controllerTwistMsg.angular.z = -1.8;
 		}
-
-		if(distMinLaser <= 0.3)
+		// Suchmodus - kein Pfeiler in Sicht
+		else if (minDist >= 5)
 		{
-			//robot at pillar, stop & turn around
-			twistMsg.linear.x = 0;
-			twistMsg.angular.z = 0.2;
-			ROS_INFO("Turning...");
+			//ROS_INFO("suchen");
+			controllerTwistMsg.linear.x = 0.65;
+			controllerTwistMsg.angular.z = 0.5;
 		}
-		// publish controller output
-		twistPublisher_.publish(twistMsg);
+		else
+		{
+			controllerTwistMsg.linear.x = 0;
+			controllerTwistMsg.angular.z = 0;
+		}
+		//ROS_INFO("x: %f - z: %f",controllerTwistMsg.linear.x, controllerTwistMsg.angular.z);
+        twistPublisher_.publish(controllerTwistMsg);
 
-/*
-
-		// Transform point of pillar form laser coordinates to world coordinates
+		// TF2 Message (geometry_msgs/TransformStamped) Robo-Odom empfangen
+		
 		try
 		{
-			tfListener.transformPoint("odom",pointLaser,pointOdom);
-		}
-		catch(tf::TransformException &ex)
-		{
-			ROS_ERROR("%s", ex.what());
-		}
-	
-		// Init marker message
-		markerMsg.header.frame_id = "odom";
-		markerMsg.header.stamp = ros::Time();
-		markerMsg.ns = "turtlebot_highlevel_controller";
-		markerMsg.id = 1;
-		markerMsg.type = visualization_msgs::Marker::SPHERE;
-		markerMsg.action = visualization_msgs::Marker::ADD;
-		markerMsg.pose.orientation.x = 0.0;
-		markerMsg.pose.orientation.y = 0.0;
-		markerMsg.pose.orientation.z = 0.0;
-		markerMsg.pose.orientation.w = 1.0;
-		markerMsg.scale.x = 0.1;
-		markerMsg.scale.y = 0.1;
-		markerMsg.scale.z = 0.1;
-		markerMsg.color.a = 1.0;
-		markerMsg.color.r = 1.0;
-		markerMsg.color.g = 0.0;
-		markerMsg.color.b = 0.0;
-		markerMsg.pose.position.x = pointOdom.point.x;
-		markerMsg.pose.position.y = pointOdom.point.y;
-		markerMsg.pose.position.z = pointOdom.point.z;
+			if(ros::ok())
+			{
+			transformStamped = tfBuffer.lookupTransform("odom", "base_laser_link" , ros::Time(0));
+			ROS_INFO("trans");
+        	}
+        }
+        catch (tf2::TransformException &ex) 
+        {
+        	ROS_WARN("%s",ex.what());        	
+        }
 
-		markerPublisher_.publish(markerMsg);
-*/
-	}
+        // Tranformation
+     	tf2::doTransform(laserPointStamped, odomPointStamped, transformStamped);
+        
+		//Marker1 init: (Marker für die Visualisierung der Säule in RViz)
+		minMarkerMsg.header.frame_id = "odom"; //"base_laser_link"; 
+		minMarkerMsg.header.stamp = ros::Time();
+		minMarkerMsg.ns = "turtlebot_highlevel_controller";
+		minMarkerMsg.id = 1;
+		minMarkerMsg.type = visualization_msgs::Marker::SPHERE;
+		minMarkerMsg.action = visualization_msgs::Marker::ADD;
+		minMarkerMsg.pose.orientation.x = 0.0;
+		minMarkerMsg.pose.orientation.y = 0.0;
+		minMarkerMsg.pose.orientation.z = 0.0;
+		minMarkerMsg.pose.orientation.w = 1.0;
+		minMarkerMsg.scale.x = 0.1;
+		minMarkerMsg.scale.y = 0.1;
+		minMarkerMsg.scale.z = 1;
+		minMarkerMsg.color.a = 1.0;
+		minMarkerMsg.color.r = 1.0;
+		minMarkerMsg.color.g = 0.2;
+		minMarkerMsg.color.b = 0.0;
+		
+		minMarkerMsg.pose.position.x = odomPointStamped.point.x;
+		minMarkerMsg.pose.position.y = odomPointStamped.point.y;
+		minMarkerMsg.pose.position.z = odomPointStamped.point.z;
+		
+		visPublisher_.publish(minMarkerMsg);
+		
+		//ROS_INFO("x: %f , y: %f,  z: %f", saeule_odom.x, saeule_odom.y, saeule_odom.z);
+		//ROS_INFO("tr_x: %f , tr_y: %f,  tr_z: %f", transform_robo_world.getOrigin().x(), 
+		//	transform_robo_world.getOrigin().y(), transform_robo_world.getOrigin().z());
+}
 
 	//bool TurtlebotHighlevelController::serviceCallback(std_srvs::Trigger::Request& request, 
 	//   												std_srvs::Trigger::Response& response)
