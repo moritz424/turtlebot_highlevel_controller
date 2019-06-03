@@ -77,7 +77,7 @@ namespace turtlebot_highlevel_controller
 		{
 			//ROS_INFO("drehen");
 			controllerTwistMsg.linear.x = 0;
-			controllerTwistMsg.angular.z = -1.8;
+			controllerTwistMsg.angular.z = 1;
 		}
 		// Suchmodus - kein Pfeiler in Sicht
 		else if (minDist >= 5)
@@ -101,7 +101,6 @@ namespace turtlebot_highlevel_controller
 			if(ros::ok())
 			{
 			transformStamped = tfBuffer.lookupTransform("odom", "base_laser_link" , ros::Time(0));
-			ROS_INFO("trans");
         	}
         }
         catch (tf2::TransformException &ex) 
@@ -129,8 +128,7 @@ namespace turtlebot_highlevel_controller
 		minMarkerMsg.color.a = 1.0;
 		minMarkerMsg.color.r = 1.0;
 		minMarkerMsg.color.g = 0.2;
-		minMarkerMsg.color.b = 0.0;
-		
+		minMarkerMsg.color.b = 0.0;		
 		minMarkerMsg.pose.position.x = odomPointStamped.point.x;
 		minMarkerMsg.pose.position.y = odomPointStamped.point.y;
 		minMarkerMsg.pose.position.z = odomPointStamped.point.z;

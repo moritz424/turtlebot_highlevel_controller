@@ -7,17 +7,27 @@ add_definitions(-std=c++11)
 ## is used, also find other catkin packages
 find_package(
 
-  catkin REQUIRED COMPONENTS roscpp rospy sensor_msgs tf
+  catkin REQUIRED COMPONENTS roscpp rospy sensor_msgs tf std_msgs message_generation
 )
 
 ## Find system libraries
 #find_package(Eigen3 REQUIRED)
 #find_package(Boost REQUIRED)
 
+add_message_files(
+  FILES
+  Target.msg
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
+
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}_core
-  CATKIN_DEPENDS roscpp rospy sensor_msgs
+  CATKIN_DEPENDS roscpp rospy sensor_msgs message_runtime
   # DEPENDS
 )
 
@@ -43,6 +53,8 @@ add_executable(
   src/turtlebot_laserscan_range/TurtlebotHighlevelController.cpp
 )
 
+
+
 add_dependencies(${PROJECT_NAME}_core
   ${catkin_EXPORTED_TARGETS}
 )
@@ -59,6 +71,7 @@ target_link_libraries(${PROJECT_NAME}
   ${PROJECT_NAME}_core
   ${catkin_LIBRARIES}
 )
+
 
 
 #

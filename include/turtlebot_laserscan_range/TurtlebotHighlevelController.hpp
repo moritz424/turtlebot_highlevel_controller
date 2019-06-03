@@ -11,10 +11,9 @@
 #include <math.h>
 #include <visualization_msgs/Marker.h>
 #include <tf2_ros/transform_listener.h>
-
-#include "tf2_ros/buffer.h"
+#include <tf2_ros/buffer.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-
+#include <turtlebot_highlevel_controller/Target.h>
 
 
 namespace turtlebot_highlevel_controller 
@@ -49,6 +48,7 @@ namespace turtlebot_highlevel_controller
     //
     geometry_msgs::PointStamped laserPointStamped;
     geometry_msgs::PointStamped odomPointStamped;
+    turtlebot_highlevel_controller::Target targetMsg; // 
 
     // ROS topic publisher
     ros::Publisher scanPublisher_;
