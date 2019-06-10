@@ -64,6 +64,12 @@
    <remap from="cmd_vel" to="/cmd_vel_mux/input/teleop"/>
   </node> 
 
+  <!-- Launch ROS Turtlebot Mapping Node -->
+  <node pkg="turtlebot_highlevel_controller" type="turtlebot_highlevel_controller" name="turtlebot_mapping" output="screen">   
+   <rosparam command="load" file="$(find turtlebot_highlevel_controller)/config/default_mapping.yaml"/> 
+  </node>
+ 
+
   <!--  ****** Maps *****  -->
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
     <param name="frame_id" value="/map"/>

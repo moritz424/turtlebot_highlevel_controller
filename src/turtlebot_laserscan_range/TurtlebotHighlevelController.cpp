@@ -8,21 +8,30 @@
 namespace turtlebot_highlevel_controller 
 {
 	TurtlebotHighlevelController::TurtlebotHighlevelController(ros::NodeHandle& nodeHandle)
-		: nodeHandle_(nodeHandle), tfListener(tfBuffer)
+		: nodeHandle_(nodeHandle)
 	{
   		if(!readParameters()) 
   		{
-			ROS_ERROR("Could not read parameters.");
+  			std::string globalName;
+  			bool x = nodeHandle_.getParam("/global_name", globalName);
+			ROS_ERROR("Could not read parameters. %s",globalName.c_str());
 			ros::requestShutdown();
   		}
   		//minMarkerMsg.header.frame_id = ros::topic::waitForMessage('odom');
   		
   		scanPublisher_ = nodeHandle_.advertise<sensor_msgs::LaserScan>("scan1",queueSize_);
-  		twistPublisher_ = nodeHandle_.advertise<geometry_msgs::Twist>("/cmd_vel_mux/input/teleop",queueSize_);
+  	/*	twistPublisher_ = nodeHandle_.advertise<geometry_msgs::Twist>("/cmd_vel_mux/input/teleop",queueSize_);
   		visPublisher_ = nodeHandle_.advertise<visualization_msgs::Marker>("min_marker", 0);
-		
+	*/	
+
+  		targetMsgPublisher_ = nodeHandle_.advertise<turtlebot_highlevel_controller::Target>("target0",queueSize_);
+
 		scanSubscriber_ = nodeHandle_.subscribe(subscriberTopic_, queueSize_, 
   							&TurtlebotHighlevelController::topicCallback, this);
+
+
+
+
 
    		ROS_INFO("Successfully launched node.");
 	};
@@ -52,9 +61,20 @@ namespace turtlebot_highlevel_controller
 		minScanMsg.intensities = algorithm_.getIntensLaserScan();
 
 		minAngle = msg.angle_min+((minIndex)*msg.angle_increment);
-		//ROS_INFO("Distance: %f ,  Angle: %f", minDist, minAngle);
+	
 		scanPublisher_.publish(minScanMsg);
 
+		// fill and publish target message for turtlebot_mapping node
+		targetMsg.header = msg.header;
+		targetMsg.distance = minDist;
+		targetMsg.angle_min = msg.angle_min+((minIndex-2)*msg.angle_increment);
+		targetMsg.angle_max = msg.angle_min+(5*msg.angle_increment);
+
+		ROS_INFO("Message to transmit: %f", targetMsg.distance);
+
+		targetMsgPublisher_.publish(targetMsg);
+
+		/*
 		//Pfeilerposition aus Robosicht: Point Message
 		laserPointStamped.header.frame_id = "base_laser_link";
 		laserPointStamped.header.stamp = ros::Time();
@@ -135,9 +155,7 @@ namespace turtlebot_highlevel_controller
 		
 		visPublisher_.publish(minMarkerMsg);
 		
-		//ROS_INFO("x: %f , y: %f,  z: %f", saeule_odom.x, saeule_odom.y, saeule_odom.z);
-		//ROS_INFO("tr_x: %f , tr_y: %f,  tr_z: %f", transform_robo_world.getOrigin().x(), 
-		//	transform_robo_world.getOrigin().y(), transform_robo_world.getOrigin().z());
+		*/
 }
 
 	//bool TurtlebotHighlevelController::serviceCallback(std_srvs::Trigger::Request& request, 

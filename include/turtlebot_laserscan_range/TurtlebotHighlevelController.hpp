@@ -37,24 +37,28 @@ namespace turtlebot_highlevel_controller
       
    
     // Declare buffer and listener
-   tf2_ros::Buffer tfBuffer;
-   tf2_ros::TransformListener tfListener;
-    
-    
-
+    //tf2_ros::Buffer tfBuffer;
+    //tf2_ros::TransformListener tfListener;
     //geometry_msgs::StampedTransform stampTrans;
+
+   //! ROS message type
     geometry_msgs::TransformStamped transformStamped;
 
-    //
+    /*
     geometry_msgs::PointStamped laserPointStamped;
     geometry_msgs::PointStamped odomPointStamped;
-    turtlebot_highlevel_controller::Target targetMsg; // 
+     // 
+  */
+
+    // ROS target message
+    turtlebot_highlevel_controller::Target targetMsg;
 
     // ROS topic publisher
     ros::Publisher scanPublisher_;
-    ros::Publisher twistPublisher_;
-    ros::Publisher visPublisher_; 
-
+    //ros::Publisher twistPublisher_;
+    //ros::Publisher visPublisher_; 
+    ros::Publisher targetMsgPublisher_;
+   
    private:
 
 
@@ -64,9 +68,9 @@ namespace turtlebot_highlevel_controller
     //! ROS topic subscriber.
     ros::Subscriber scanSubscriber_;
 
-    
+    sensor_msgs::LaserScan minScanMsg;
 
-        //! ROS topic name to subscribe to.
+    //! ROS topic name to subscribe to.
     std::string subscriberTopic_;
 
     
@@ -88,16 +92,16 @@ namespace turtlebot_highlevel_controller
      */
     void topicCallback(const sensor_msgs::LaserScan& msg);
 
-    /*!
-     * Variables for finding minimum of laser scan data array
-     */
+    
+     // Variables for finding minimum of laser scan data array
+     
     int minIndex;
     float minAngle;
     float minDist;
-    sensor_msgs::LaserScan minScanMsg;
+    /*!
     geometry_msgs::Twist controllerTwistMsg;
     visualization_msgs::Marker minMarkerMsg;
-
+    */
      //! ROS service server.
     //ros::ServiceServer serviceServer_;
 

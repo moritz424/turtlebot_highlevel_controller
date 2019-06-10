@@ -6,7 +6,6 @@ add_definitions(-std=c++11)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(
-
   catkin REQUIRED COMPONENTS roscpp rospy sensor_msgs tf std_msgs message_generation
 )
 
@@ -26,7 +25,7 @@ generate_messages(
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}_core
+  LIBRARIES ${PROJECT_NAME}_core turtlebot_mapping
   CATKIN_DEPENDS roscpp rospy sensor_msgs message_runtime
   # DEPENDS
 )
@@ -39,20 +38,28 @@ catkin_package(
 
 ## Declare a cpp library
 add_library(
-  ${PROJECT_NAME}_core	
+  ${PROJECT_NAME}_core
+  src/turtlebot_mapping/TurtlebotMapping
+  src/turtlebot_mapping/turtlebot_mapping_node
   src/turtlebot_laserscan_range/Algorithm.cpp
 )
 
 
 include_directories(
-  include ${catkin_INCLUDE_DIRS}
+  include ${catkin_INCLUDE_DIRS} turtlebot_mapping
 )
+
 
 add_executable(
-  ${PROJECT_NAME} src/turtlebot_laserscan_range/${PROJECT_NAME}_node.cpp	
+  ${PROJECT_NAME} 
+  src/turtlebot_laserscan_range/${PROJECT_NAME}_node.cpp  
   src/turtlebot_laserscan_range/TurtlebotHighlevelController.cpp
-)
+  )
 
+add_executable(
+  turtlebot_mapping
+  src/turtlebot_mapping/turtlebot_mapping_node.cpp
+  )
 
 
 add_dependencies(${PROJECT_NAME}_core
@@ -63,12 +70,13 @@ add_dependencies(${PROJECT_NAME}
   ${catkin_EXPORTED_TARGETS}
 )
 
-target_link_libraries(${PROJECT_NAME}_core	
+target_link_libraries(
+  ${PROJECT_NAME}_core	
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(${PROJECT_NAME}
-  ${PROJECT_NAME}_core
+target_link_libraries(
+  turtlebot_mapping
   ${catkin_LIBRARIES}
 )
 
@@ -89,6 +97,7 @@ install(
 # Mark cpp header files for installation
 install(
   DIRECTORY include/${PROJECT_NAME}/
+  DIRECTORY include/turtlebot_mapping
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
   FILES_MATCHING PATTERN "*.hpp"
 )
