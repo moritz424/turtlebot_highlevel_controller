@@ -21,6 +21,7 @@ namespace turtlebot_highlevel_controller
   /*!
    * Main class for the node to handle the ROS interfacing.
    */
+<<<<<<< HEAD
   class TurtlebotHighlevelController
   {
    public:

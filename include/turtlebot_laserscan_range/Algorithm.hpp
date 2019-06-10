@@ -25,7 +25,11 @@ class Algorithm
   virtual ~Algorithm();
 
   /*!
+<<<<<<< HEAD
    * Set new measurement data.
+=======
+  * Set new measurement data.
+>>>>>>> 99da62728bd7335465a746bb6f15bfacac49fdf9
    * @param data the new data.
    */
   float findMinLaserScan(const std::vector<float> data);

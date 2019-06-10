@@ -18,7 +18,7 @@ namespace turtlebot_highlevel_controller
 			ros::requestShutdown();
   		}
   		//minMarkerMsg.header.frame_id = ros::topic::waitForMessage('odom');
-  		
+  
   		scanPublisher_ = nodeHandle_.advertise<sensor_msgs::LaserScan>("scan1",queueSize_);
   	/*	twistPublisher_ = nodeHandle_.advertise<geometry_msgs::Twist>("/cmd_vel_mux/input/teleop",queueSize_);
   		visPublisher_ = nodeHandle_.advertise<visualization_msgs::Marker>("min_marker", 0);
@@ -28,6 +28,7 @@ namespace turtlebot_highlevel_controller
 
 		scanSubscriber_ = nodeHandle_.subscribe(subscriberTopic_, queueSize_, 
   							&TurtlebotHighlevelController::topicCallback, this);
+
 
 
 
@@ -45,6 +46,7 @@ namespace turtlebot_highlevel_controller
 			&& nodeHandle_.getParam("queue_size",queueSize_)
 			&& nodeHandle_.getParam("kAng",kang_)
 			&& nodeHandle_.getParam("kVel",kvel_))) return false;
+
 
 		return true;
 	}
@@ -156,7 +158,7 @@ namespace turtlebot_highlevel_controller
 		visPublisher_.publish(minMarkerMsg);
 		
 		*/
-}
+	}
 
 	//bool TurtlebotHighlevelController::serviceCallback(std_srvs::Trigger::Request& request, 
 	//   												std_srvs::Trigger::Response& response)

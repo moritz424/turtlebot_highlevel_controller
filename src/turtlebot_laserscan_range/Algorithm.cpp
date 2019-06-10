@@ -70,6 +70,4 @@ namespace turtlebot_highlevel_controller
 		return intens_array;
 	}
 
-
-
 } /* namespace */
