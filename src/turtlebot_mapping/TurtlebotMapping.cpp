@@ -24,6 +24,9 @@ namespace turtlebot_mapping
         
     };
 
+    TurtlebotMapping::~TurtlebotMapping()
+    {}
+
     bool TurtlebotMapping::readParameters()
     {
         if (!(nodeHandle_.getParam("subscriber_topic", subscriberTopic_)
