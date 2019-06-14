@@ -25,7 +25,7 @@ generate_messages(
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}_core turtlebot_mapping
+  LIBRARIES ${PROJECT_NAME}_core turtlebot_mapping_node
   CATKIN_DEPENDS roscpp rospy sensor_msgs message_runtime
   # DEPENDS
 )
@@ -35,49 +35,56 @@ catkin_package(
 #  BUILD  ##
 #
 
-
-## Declare a cpp library
-add_library(
-  ${PROJECT_NAME}_core
-  src/turtlebot_mapping/TurtlebotMapping
-  src/turtlebot_mapping/turtlebot_mapping_node
-  src/turtlebot_laserscan_range/Algorithm.cpp
-)
-
-
 include_directories(
   include ${catkin_INCLUDE_DIRS} turtlebot_mapping
 )
 
 
-add_executable(
-  ${PROJECT_NAME} 
+## Declare a cpp library
+
+add_library(${PROJECT_NAME}
+  src/turtlebot_laserscan_range/Algorithm.cpp
+)
+target_link_libraries(${PROJECT_NAME} 
+  ${catkin_LIBRARIES}
+)
+
+add_executable(${PROJECT_NAME}_node
   src/turtlebot_laserscan_range/${PROJECT_NAME}_node.cpp  
   src/turtlebot_laserscan_range/TurtlebotHighlevelController.cpp
-  )
-
-add_executable(
-  turtlebot_mapping
-  src/turtlebot_mapping/turtlebot_mapping_node.cpp
-  )
-
-
-add_dependencies(${PROJECT_NAME}_core
-  ${catkin_EXPORTED_TARGETS}
 )
+target_link_libraries(${PROJECT_NAME}_node
+  ${PROJECT_NAME}
+  ${catkin_LIBRARIES}
+)
+
+
+
+add_library(turtlebot_mapping
+  src/turtlebot_mapping/TurtlebotMapping.cpp
+)
+target_link_libraries(turtlebot_mapping
+  ${catkin_LIBRARIES}
+)
+
+
+add_executable(turtlebot_mapping_node
+  src/turtlebot_mapping/turtlebot_mapping_node.cpp
+  
+  )
+target_link_libraries(turtlebot_mapping_node 
+  turtlebot_mapping
+  ${catkin_LIBRARIES}
+)
+
+
 
 add_dependencies(${PROJECT_NAME}
   ${catkin_EXPORTED_TARGETS}
 )
 
-target_link_libraries(
-  ${PROJECT_NAME}_core	
-  ${catkin_LIBRARIES}
-)
-
-target_link_libraries(
-  turtlebot_mapping
-  ${catkin_LIBRARIES}
+add_dependencies(turtlebot_mapping
+  ${catkin_EXPORTED_TARGETS}
 )
 
 
@@ -88,7 +95,14 @@ target_link_libraries(
 
 # Mark executables and/or libraries for installation
 install(
-  TARGETS ${PROJECT_NAME}
+  TARGETS ${PROJECT_NAME}_node ${PROJECT_NAME}
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(
+  TARGETS turtlebot_mapping_node turtlebot_mapping
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -97,10 +111,16 @@ install(
 # Mark cpp header files for installation
 install(
   DIRECTORY include/${PROJECT_NAME}/
-  DIRECTORY include/turtlebot_mapping
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
   FILES_MATCHING PATTERN "*.hpp"
 )
+
+install(
+  DIRECTORY include/turtlebot_mapping/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.hpp"
+)
+
 
 # Mark other files for installation
 install(
