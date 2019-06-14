@@ -66,7 +66,7 @@
 
   <!-- Launch ROS Turtlebot Mapping Node -->
   <node pkg="turtlebot_highlevel_controller" type="turtlebot_highlevel_controller" name="turtlebot_mapping" output="screen">   
-   <rosparam command="load" file="$(find turtlebot_highlevel_controller)/config/default_mapping.yaml"/> 
+   <rosparam command="load" file="$(find turtlebot_highlevel_controller)/config/default.yaml"/> 
   </node>
  
 

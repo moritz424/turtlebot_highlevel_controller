@@ -12,15 +12,13 @@ namespace turtlebot_mapping
     {
        if(!readParameters()) 
         {
-            std::string globalName;
-            bool x = nodeHandle_.getParam("/global_name", globalName);
-            ROS_ERROR("Could not read parameters. %s",globalName.c_str());
+            ROS_ERROR("Could not read parameters mapping");
             ros::requestShutdown();
         }
         targetSubscriber_ = nodeHandle_.subscribe(subscriberTopic_, queueSize_, 
                             &TurtlebotMapping::topicCallback, this);
 
-        ROS_INFO("Successfully launched mapping node.");
+        ROS_INFO("Successfully launched mapping node map.");
         
     };
 
@@ -29,8 +27,8 @@ namespace turtlebot_mapping
 
     bool TurtlebotMapping::readParameters()
     {
-        if (!(nodeHandle_.getParam("subscriber_topic", subscriberTopic_)
-            && nodeHandle_.getParam("queue_size",queueSize_))) return false;
+        if (!(nodeHandle_.getParam("subscriber_topic_map", subscriberTopic_)
+            && nodeHandle_.getParam("queue_size_map",queueSize_))) return false;
 
         return true;
     }

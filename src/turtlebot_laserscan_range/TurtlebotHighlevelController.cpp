@@ -12,9 +12,7 @@ namespace turtlebot_highlevel_controller
 	{
   		if(!readParameters()) 
   		{
-  			std::string globalName;
-  			bool x = nodeHandle_.getParam("/global_name", globalName);
-			ROS_ERROR("Could not read parameters. %s",globalName.c_str());
+  			ROS_ERROR("Could not read parameters thc.");
 			ros::requestShutdown();
   		}
   		//minMarkerMsg.header.frame_id = ros::topic::waitForMessage('odom');
@@ -34,7 +32,7 @@ namespace turtlebot_highlevel_controller
 
 
 
-   		ROS_INFO("Successfully launched node.");
+   		ROS_INFO("Successfully launched node thc.");
 	};
 
 	TurtlebotHighlevelController::~TurtlebotHighlevelController()
