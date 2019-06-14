@@ -4,7 +4,7 @@
 int main(int argc, char** argv)
 {
 	ros::init(argc, argv, "turtlebot_mapping");
-	ros::NodeHandle nodeHandleMap("~");
+	ros::NodeHandle nodeHandleMap = ros::NodeHandle();
 
 	turtlebot_mapping::TurtlebotMapping turtlebot_mapping(nodeHandleMap);
 	

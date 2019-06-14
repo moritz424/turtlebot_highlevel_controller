@@ -2,5 +2,5 @@ subscriber_topic: /scan
 queue_size: 100
 kVel: 0.5
 kAng: 1.5
-subscriber_topic_map: /turtlebot_highlevel_controller/target0
+subscriber_topic_map: /target0
 queue_size_map: 100
