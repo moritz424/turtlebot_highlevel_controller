@@ -25,7 +25,7 @@ generate_messages(
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}_core turtlebot_mapping_node
+  LIBRARIES ${PROJECT_NAME} turtlebot_mapping
   CATKIN_DEPENDS roscpp rospy sensor_msgs message_runtime
   # DEPENDS
 )
@@ -44,6 +44,7 @@ include_directories(
 
 add_library(${PROJECT_NAME}
   src/turtlebot_laserscan_range/Algorithm.cpp
+
 )
 target_link_libraries(${PROJECT_NAME} 
   ${catkin_LIBRARIES}
@@ -52,6 +53,7 @@ target_link_libraries(${PROJECT_NAME}
 add_executable(${PROJECT_NAME}_node
   src/turtlebot_laserscan_range/${PROJECT_NAME}_node.cpp  
   src/turtlebot_laserscan_range/TurtlebotHighlevelController.cpp
+  
 )
 target_link_libraries(${PROJECT_NAME}_node
   ${PROJECT_NAME}
@@ -68,9 +70,9 @@ target_link_libraries(turtlebot_mapping
 )
 
 
-add_executable(turtlebot_mapping_node
+add_executable(turtlebot_mapping_node  
+  src/turtlebot_mapping/TurtlebotMapping.cpp
   src/turtlebot_mapping/turtlebot_mapping_node.cpp
-  
   )
 target_link_libraries(turtlebot_mapping_node 
   turtlebot_mapping
