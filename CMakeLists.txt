@@ -46,6 +46,10 @@ include_directories(
   include ${catkin_INCLUDE_DIRS}
 )
 
+add_executable(
+  ${PROJECT_NAME} src/turtlebot_laserscan_range/${PROJECT_NAME}_node.cpp	
+  src/turtlebot_laserscan_range/TurtlebotHighlevelController.cpp
+)
 
 add_dependencies(${PROJECT_NAME}_core
   ${catkin_EXPORTED_TARGETS}
@@ -71,10 +75,6 @@ target_link_libraries(turtlebot_mapping
   ${catkin_LIBRARIES}
 )
 
-add_executable(
-  ${PROJECT_NAME} src/turtlebot_laserscan_range/${PROJECT_NAME}_node.cpp	
-  src/turtlebot_laserscan_range/TurtlebotHighlevelController.cpp
-)
 
 add_executable(turtlebot_mapping_node  
   src/turtlebot_mapping/TurtlebotMapping.cpp
