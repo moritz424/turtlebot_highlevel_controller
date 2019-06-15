@@ -18,6 +18,7 @@ namespace turtlebot_mapping
         targetSubscriber_ = nodeHandle_.subscribe(subscriberTopic_, queueSize_, 
                             &TurtlebotMapping::topicCallback, this);
 
+        ROS_WARN("Ich bin Node TurtlebotMapping");
         ROS_INFO("Successfully launched mapping node map.");
         
     };

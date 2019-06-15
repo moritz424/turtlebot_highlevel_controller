@@ -30,7 +30,7 @@ namespace turtlebot_highlevel_controller
 
 
 
-
+	ROS_WARN("Ich bin Node TurtlebotHighlevelController");
 
    		ROS_INFO("Successfully launched node thc.");
 	};

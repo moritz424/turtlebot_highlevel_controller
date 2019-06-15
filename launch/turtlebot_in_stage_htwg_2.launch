@@ -8,8 +8,8 @@
   <arg name="3d_sensor"  default="$(optenv TURTLEBOT_3D_SENSOR kinect)"/>  <!-- kinect, asus_xtion_pro -->
 
  <!-- Name of the map to use (without path nor extension) and initial position -->
-  <arg name="map_file"       value="~/catkin_ws/src/turtlebot_simulator/turtlebot_stage/maps/apartment.yaml"/> <!-- robopark_plan -->
-  <arg name="world_file"     value="~/catkin_ws/src/turtlebot_simulator/turtlebot_stage/maps/stage/apartment.world"/>
+<arg name="map_file"       default="$(find turtlebot_highlevel_controller)/maps/apartment.yaml"/>
+  <arg name="world_file"     default="$(find turtlebot_highlevel_controller)/maps/stage/apartment.world"/>
   <arg name="initial_pose_x" default="2.0"/>
   <arg name="initial_pose_y" default="2.0"/>
   <arg name="initial_pose_a" default="0.0"/>
@@ -25,7 +25,7 @@
           /odom : odometry data from the simulated odometry
           /base_scan : laser data from the simulated laser
           /base_pose_ground_truth : the ground truth pose
-        Parameters:
+        <Parameters:></Parameters:>
           base_watchdog_timeout : time (s) after receiving the last command on cmd_vel before stopping the robot
         Args:
           -g : run in headless mode.
@@ -58,15 +58,17 @@
   <!--  ************** Navigation  ***************  -->
   <include file="$(find turtlebot_navigation)/launch/includes/move_base.launch.xml"/>
 
-  <!-- Launch ROS Turtlebot Highlevel Controller Node -->
+  <!--  ******************** Load parameter ********************  -->
+  <rosparam command = "load" file = "$(find turtlebot_highlevel_controller)/config/default.yaml" />
+
+
+    <!-- Launch ROS Turtlebot Highlevel Controller Node -->
   <node pkg="turtlebot_highlevel_controller" type="turtlebot_highlevel_controller" name="turtlebot_highlevel_controller" output="screen">    
-   <rosparam command="load" file="$(find turtlebot_highlevel_controller)/config/default.yaml"/>   
    <remap from="cmd_vel" to="/cmd_vel_mux/input/teleop"/>
   </node> 
 
   <!-- Launch ROS Turtlebot Mapping Node -->
-  <node pkg="turtlebot_highlevel_controller" type="turtlebot_highlevel_controller" name="turtlebot_mapping" output="screen">   
-   <rosparam command="load" file="$(find turtlebot_highlevel_controller)/config/default.yaml"/> 
+  <node pkg="turtlebot_highlevel_controller" type="turtlebot_mapping_node" name="turtlebot_mapping" output="screen">   
   </node>
  
 
