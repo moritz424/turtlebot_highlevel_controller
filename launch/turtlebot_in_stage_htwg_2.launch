@@ -72,7 +72,7 @@
   </node>
 
     <!-- Launch ROS fibonacci_client Node -->
-  <node pkg="turtlebot_highlevel_controller" type="fibonacci_client" name="fibonacci_client" output="screen">    
+  <node pkg="turtlebot_highlevel_controller" type="mapping_client" name="mapping_client" output="screen">    
   </node> 
  
 

@@ -3,11 +3,10 @@
 
 int main(int argc, char** argv)
 {
-	ros::init(argc, argv, "turtlebot_mapping");
+	ros::init(argc, argv, "turtlebot_mapping_and_server");
 	ros::NodeHandle nodeHandleMap = ros::NodeHandle();
 
-	turtlebot_mapping::FibonacciAction fibonacci_action("fibonacci");
-	turtlebot_mapping::TurtlebotMapping turtlebot_mapping(nodeHandleMap);
+	turtlebot_mapping::controllerAction controller_action(nodeHandleMap);
 	
 	ros::spin();
 	return 0;

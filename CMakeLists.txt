@@ -89,7 +89,7 @@ add_library(turtlebot_mapping
   src/turtlebot_mapping/TurtlebotMapping.cpp
 )
 
-add_dependencies(turtlebot_mapping_node 
+add_dependencies(turtlebot_mapping 
 	turtlebot_highlevel_controller_generate_messages_cpp
 )
 
@@ -103,15 +103,15 @@ target_link_libraries(turtlebot_mapping_node
 )
 
 ########### fibonacci_client ###############
-add_executable(fibonacci_client src/fibonacci_client.cpp)
+add_executable(mapping_client src/mapping_client.cpp)
 
 target_link_libraries(
-  fibonacci_client
+  mapping_client
   ${catkin_LIBRARIES}
 )
 
 add_dependencies(
-  fibonacci_client
+  mapping_client
   # The one below is the name of your package!!
   ${catkin_EXPORTED_TARGETS}
 )
