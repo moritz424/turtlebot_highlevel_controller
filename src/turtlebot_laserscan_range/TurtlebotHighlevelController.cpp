@@ -17,7 +17,7 @@ namespace turtlebot_highlevel_controller
 			ros::requestShutdown();
   		}
 
-  		  Client client("controller", true); // true -> don't need ros::spin()
+  		 /* Client client("controller", true); // true -> don't need ros::spin()
 		  client.waitForServer();
 		  turtlebot_highlevel_controller::controllerGoal goal;
 		  goal.order = 2;
@@ -25,7 +25,7 @@ namespace turtlebot_highlevel_controller
 		  client.waitForResult(ros::Duration(5.0));
 		  if (client.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
 		    ROS_INFO("CLIENT SUCEED");
-
+		*/
 
 
 
@@ -46,7 +46,7 @@ namespace turtlebot_highlevel_controller
 
 
 
-	ROS_WARN("Ich bin Node TurtlebotHighlevelController");
+	ROS_WARN("Ich bin im Constructor TurtlebotHighlevelController");
 
    		ROS_INFO("Successfully launched node thc.");
 	};

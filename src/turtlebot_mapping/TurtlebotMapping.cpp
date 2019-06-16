@@ -4,17 +4,71 @@
 #include <string>
 #include <sstream>
 
-typedef actionlib::SimpleActionServer<turtlebot_highlevel_controller::controllerAction> Server;
 
-void execute(const turtlebot_highlevel_controller::controllerGoalConstPtr& goal, Server* as)
-{
-    ROS_INFO("HELLO ACTION SERVER");
-    as->setSucceeded();
-
-}
 
 namespace turtlebot_mapping
 {
+
+ FibonacciAction::FibonacciAction(std::string name) :
+    // Bind the callback to the action server. False is for thread spinning
+    as_(nh_, name, boost::bind(&FibonacciAction::executeCB, this, _1), false),
+    action_name_(name)
+  {
+    // Start the action server
+    as_.start();
+    ROS_WARN("Ich bin im Constructor FibonacciAction");
+  }
+
+  // Destructor
+  FibonacciAction::~FibonacciAction(void)
+  {
+  }
+
+  // Execute action callback (passing the goal via reference)
+  void FibonacciAction::executeCB(const turtlebot_highlevel_controller::FibonacciGoalConstPtr &goal)
+  {
+    // helper variables
+    ros::Rate r(1);
+    bool success = true;
+
+    // push_back the seeds for the fibonacci sequence
+    feedback_.sequence.clear();
+    feedback_.sequence.push_back(0);
+    feedback_.sequence.push_back(1);
+
+    // publish info to the console for the user
+    ROS_INFO("%s: Executing, creating fibonacci sequence of order %i with seeds %i, %i", action_name_.c_str(), goal->order, feedback_.sequence[0], feedback_.sequence[1]);
+
+    // start executing the action (i <= goal->order, as goal is a pointer)
+    for(int i=1; i<=goal->order; i++)
+    {
+      // check that preempt has not been requested by the client !!!!!!!!!ABBRUCHHH!!!!!!!!!!!!!!!!
+      if (as_.isPreemptRequested() || !ros::ok())
+      {
+        ROS_INFO("%s: Preempted", action_name_.c_str());
+        // set the action state to preempted
+        as_.setPreempted();
+        success = false;
+        break;
+      }
+
+      // Add the number to the feedback to be fed back
+      feedback_.sequence.push_back(feedback_.sequence[i] + feedback_.sequence[i-1]);
+      // publish the feedback
+      as_.publishFeedback(feedback_);
+      // this sleep is not necessary, the sequence is computed at 1 Hz for demonstration purposes
+      r.sleep();
+    }
+
+    if(success)
+    {
+      result_.sequence = feedback_.sequence;
+      ROS_INFO("%s: Succeeded", action_name_.c_str());
+      // set the action state to succeeded
+      as_.setSucceeded(result_); // ENDE Bedingung
+    }
+  }
+
     TurtlebotMapping::TurtlebotMapping(ros::NodeHandle& nodeHandle)
         : nodeHandle_(nodeHandle)   
     {
@@ -25,15 +79,12 @@ namespace turtlebot_mapping
             ros::requestShutdown();
         }
 
-        Server server(nodeHandle_, "controller", boost::bind(&execute, _1, &server), false);
-        server.start();
-
         twistPublisher_= nodeHandle_.advertise<geometry_msgs::Twist>("/cmd_vel_mux/input/teleop",queueSize_);
 
         targetSubscriber_ = nodeHandle_.subscribe(subscriberTopic_, queueSize_, 
                             &TurtlebotMapping::topicCallback, this);
 
-        ROS_WARN("Ich bin Node TurtlebotMapping");
+        ROS_WARN("Ich bin im Constructor TurtlebotMapping");
         ROS_INFO("Successfully launched mapping node map.");
         
     };

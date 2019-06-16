@@ -16,11 +16,7 @@
   <depend>message_runtime</depend>
   <depend>actionlib</depend>
   <depend>actionlib_msgs</depend>
-
   <depend>message_generation</depend>
-
-
-
   <depend>sensor_msgs</depend>
   <depend>roscpp</depend>
   <depend>rospy</depend>

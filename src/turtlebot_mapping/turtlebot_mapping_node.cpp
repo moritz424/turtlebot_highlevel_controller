@@ -6,6 +6,7 @@ int main(int argc, char** argv)
 	ros::init(argc, argv, "turtlebot_mapping");
 	ros::NodeHandle nodeHandleMap = ros::NodeHandle();
 
+	turtlebot_mapping::FibonacciAction fibonacci_action("fibonacci");
 	turtlebot_mapping::TurtlebotMapping turtlebot_mapping(nodeHandleMap);
 	
 	ros::spin();

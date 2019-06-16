@@ -12,10 +12,41 @@
 #include <turtlebot_highlevel_controller/Target.h>
 #include <actionlib/server/simple_action_server.h>
 #include <turtlebot_highlevel_controller/controllerAction.h>
+#include <turtlebot_highlevel_controller/FibonacciAction.h>
 
 
 namespace turtlebot_mapping 
 {
+
+
+class FibonacciAction
+{
+protected:
+
+  ros::NodeHandle nh_;
+
+  // NodeHandle instance must be created before this line. Otherwise strange error occurs.
+  actionlib::SimpleActionServer<turtlebot_highlevel_controller::FibonacciAction> as_;
+  std::string action_name_;
+
+  // create messages that are used to published feedback/result
+  turtlebot_highlevel_controller::FibonacciFeedback feedback_;
+  turtlebot_highlevel_controller::FibonacciResult result_;
+
+public:
+
+  // Our constructor (with a cool initialisation list!)
+  // https://stackoverflow.com/questions/2785612/c-what-does-the-colon-after-a-constructor-mean
+  FibonacciAction(std::string name);
+
+  // Destructor
+  ~FibonacciAction(void);
+
+
+  // Execute action callback (passing the goal via reference)
+  void executeCB(const turtlebot_highlevel_controller::FibonacciGoalConstPtr &goal);
+  
+};
   /*!
    * Main class for the node to handle the ROS interfacing.
    */
