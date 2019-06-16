@@ -73,7 +73,9 @@ target_link_libraries(${PROJECT_NAME}
 add_library(turtlebot_mapping
   src/turtlebot_mapping/TurtlebotMapping.cpp
 )
-add_dependencies(turtlebot_mapping turtlebot_highlevel_controller_generate_messages_cpp)
+add_dependencies(turtlebot_mapping 
+	turtlebot_highlevel_controller_generate_messages_cpp
+)
 
 target_link_libraries(turtlebot_mapping
   ${catkin_LIBRARIES}

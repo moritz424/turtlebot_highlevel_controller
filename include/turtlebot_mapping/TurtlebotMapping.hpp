@@ -51,15 +51,19 @@ namespace turtlebot_mapping
     //! ROS topic subscriber.
     ros::Subscriber targetSubscriber_;
 
+    //! ROS topic publisher
+    ros::Publisher twistPublisher_;
     
 
     //! ROS topic name to subscribe to.
     std::string subscriberTopic_;
 
     //! Buffer size of subscriber.
+    
     int queueSize_;
-    //float kang_;  // Verstaerkungsfaktor p-Regler
+    float kang_;  // Verstaerkungsfaktor p-Regler
     float kvel_;
+    geometry_msgs::Twist controllerTwistMsg;
 
     void topicCallback(const turtlebot_highlevel_controller::Target& target);
 

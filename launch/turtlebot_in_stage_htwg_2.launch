@@ -64,11 +64,12 @@
 
     <!-- Launch ROS Turtlebot Highlevel Controller Node -->
   <node pkg="turtlebot_highlevel_controller" type="turtlebot_highlevel_controller" name="turtlebot_highlevel_controller" output="screen">    
-   <remap from="cmd_vel" to="/cmd_vel_mux/input/teleop"/>
+   
   </node> 
 
   <!-- Launch ROS Turtlebot Mapping Node -->
   <node pkg="turtlebot_highlevel_controller" type="turtlebot_mapping_node" name="turtlebot_mapping" output="screen">   
+  <remap from="cmd_vel" to="/cmd_vel_mux/input/teleop"/>
   </node>
  
 

@@ -67,8 +67,8 @@ namespace turtlebot_highlevel_controller
 		// fill and publish target message for turtlebot_mapping node
 		targetMsg.header = msg.header;
 		targetMsg.distance = minDist;
-		targetMsg.angle_min = msg.angle_min+((minIndex-2)*msg.angle_increment);
-		targetMsg.angle_max = msg.angle_min+(5*msg.angle_increment);
+		targetMsg.angle = minAngle;
+		
 
 		ROS_INFO("Message to transmit: %f", targetMsg.distance);
 
