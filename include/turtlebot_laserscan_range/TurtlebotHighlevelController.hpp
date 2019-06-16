@@ -14,6 +14,8 @@
 #include <tf2_ros/buffer.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <turtlebot_highlevel_controller/Target.h>
+#include <turtlebot_highlevel_controller/controllerAction.h> // Note: "Action" is appended
+#include <actionlib/client/simple_action_client.h>
 
 
 namespace turtlebot_highlevel_controller 

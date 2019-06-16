@@ -4,17 +4,30 @@
 #include <string>
 #include <sstream>
 
+typedef actionlib::SimpleActionServer<turtlebot_highlevel_controller::controllerAction> Server;
+
+void execute(const turtlebot_highlevel_controller::controllerGoalConstPtr& goal, Server* as)
+{
+    ROS_INFO("HELLO ACTION SERVER");
+    as->setSucceeded();
+
+}
 
 namespace turtlebot_mapping
 {
     TurtlebotMapping::TurtlebotMapping(ros::NodeHandle& nodeHandle)
-        : nodeHandle_(nodeHandle)
+        : nodeHandle_(nodeHandle)   
     {
-       if(!readParameters()) 
+
+        if(!readParameters()) 
         {
             ROS_ERROR("Could not read parameters mapping");
             ros::requestShutdown();
         }
+
+        Server server(nodeHandle_, "controller", boost::bind(&execute, _1, &server), false);
+        server.start();
+
         twistPublisher_= nodeHandle_.advertise<geometry_msgs::Twist>("/cmd_vel_mux/input/teleop",queueSize_);
 
         targetSubscriber_ = nodeHandle_.subscribe(subscriberTopic_, queueSize_, 

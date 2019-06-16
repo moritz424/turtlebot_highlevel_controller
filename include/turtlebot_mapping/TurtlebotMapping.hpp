@@ -39,18 +39,19 @@ namespace turtlebot_mapping
     //tf2_ros::TransformListener tfListener;
     
     
-  private:
+  protected:
 
 
     //! ROS node handle.
     ros::NodeHandle& nodeHandle_;
 
     //! Action server 
-    //actionlib::SimpleActionServer<turtlebot_highlevel_controller::controllerAction> as_; // NodeHandle instance must be created before this line. Otherwise strange error occurs.
+    //actionlib::SimpleActionServer<turtlebot_highlevel_controller::controllerAction> as_; 
     //std::string action_name_;
     //turtlebot_highlevel_controller::controllerFeedback feedback_;
     //turtlebot_highlevel_controller::controllerResult result_;
 
+  public:
 
     //! ROS message type
     turtlebot_highlevel_controller::Target targetMsg;

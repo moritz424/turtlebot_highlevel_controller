@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 
+typedef actionlib::SimpleActionClient<turtlebot_highlevel_controller::controllerAction> Client;
 
 namespace turtlebot_highlevel_controller 
 {
@@ -15,6 +16,21 @@ namespace turtlebot_highlevel_controller
   			ROS_ERROR("Could not read parameters thc.");
 			ros::requestShutdown();
   		}
+
+  		  Client client("controller", true); // true -> don't need ros::spin()
+		  client.waitForServer();
+		  turtlebot_highlevel_controller::controllerGoal goal;
+		  goal.order = 2;
+		  client.sendGoal(goal);
+		  client.waitForResult(ros::Duration(5.0));
+		  if (client.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+		    ROS_INFO("CLIENT SUCEED");
+
+
+
+
+
+
   		//minMarkerMsg.header.frame_id = ros::topic::waitForMessage('odom');
   
   		scanPublisher_ = nodeHandle_.advertise<sensor_msgs::LaserScan>("scan1",queueSize_);
