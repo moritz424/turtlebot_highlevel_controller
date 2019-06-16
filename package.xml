@@ -11,8 +11,14 @@
   <author email="moritz.ege@web.de">moritz</author>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>message_generation</build_depend>
-  <exec_depend>message_runtime</exec_depend>
+
+  
+  <depend>message_runtime</depend>
+
+  <depend>actionlib_msgs</depend>
+  <depend>message_generation</depend>
+
+
 
   <depend>sensor_msgs</depend>
   <depend>roscpp</depend>

@@ -6,7 +6,7 @@ add_definitions(-std=c++11)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(
-  catkin REQUIRED COMPONENTS roscpp rospy sensor_msgs tf
+  catkin REQUIRED COMPONENTS roscpp rospy sensor_msgs tf actionlib_msgs
 )
 
 ## Find system libraries
@@ -18,15 +18,21 @@ add_message_files(
   Target.msg
 )
 
+add_action_files(
+  DIRECTORY action
+  FILES controller.action
+)
+
 generate_messages(
   DEPENDENCIES
   std_msgs
+  actionlib_msgs
 )
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}_core
-  CATKIN_DEPENDS roscpp rospy sensor_msgs
+  CATKIN_DEPENDS roscpp rospy sensor_msgs actionlib_msgs
   # DEPENDS
 )
 

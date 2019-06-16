@@ -10,6 +10,8 @@
 #include <tf2_ros/buffer.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <turtlebot_highlevel_controller/Target.h>
+#include <actionlib/server/simple_action_server.h>
+#include <turtlebot_highlevel_controller/controllerAction.h>
 
 
 namespace turtlebot_mapping 
@@ -42,6 +44,12 @@ namespace turtlebot_mapping
 
     //! ROS node handle.
     ros::NodeHandle& nodeHandle_;
+
+    //! Action server 
+    //actionlib::SimpleActionServer<turtlebot_highlevel_controller::controllerAction> as_; // NodeHandle instance must be created before this line. Otherwise strange error occurs.
+    //std::string action_name_;
+    //turtlebot_highlevel_controller::controllerFeedback feedback_;
+    //turtlebot_highlevel_controller::controllerResult result_;
 
 
     //! ROS message type
