@@ -71,6 +71,11 @@
   <remap from="cmd_vel" to="/cmd_vel_mux/input/teleop"/>
   </node>
 
+<!-- Launch ROS Teleop Node -->
+<node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" launch-prefix="terminator -x python">
+<remap from="cmd_vel" to="cmd_vel_mux/input/teleop"/>
+  </node>
+
     <!-- Launch ROS Mapping Node -->
   <node pkg="turtlebot_highlevel_controller" type="mapping_client" name="mapping_client" output="screen">    
   </node> 
@@ -89,7 +94,7 @@
   </include>
 
     <!--  **************** Visualisation ****************  -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find turtlebot_stage)/rviz/robot_navigation.rviz"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find turtlebot_highlevel_controller)/config/robot_configuration.rviz"/>
 
   
 </launch>
