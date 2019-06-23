@@ -65,37 +65,8 @@ namespace turtlebot_mapping
 
         //for(int i=1; i>=goal->order; i++)
         while(true)
-    {
-        controllerTwistMsg.linear.y, controllerTwistMsg.linear.z = 0, controllerTwistMsg.angular.y,controllerTwistMsg.angular.x = 0;
-
-        // Regler für Bewegung auf Pfeiler
-        // Pfeiler gefunden und diesen anfahren
-        if ((targetMsg_.distance < 5)&&(targetMsg_.distance > 0.4))
-        {
-            //ROS_INFO("pfeiler");
-            controllerTwistMsg.linear.x = kvel_ * targetMsg_.distance;
-            controllerTwistMsg.angular.z = kang_ * targetMsg_.angle; //kp_ = p Verstaerkungsfaktor
-        }
-        // Vor dem Pfeiler anhalten und drehen
-        else if (targetMsg_.distance <= 0.4)
-        {
-            feedback_.sequence.at(0)+=1;
-            //ROS_INFO("drehen");
-            controllerTwistMsg.linear.x = 0;
-            controllerTwistMsg.angular.z = 1;
-        }
-        // Suchmodus - kein Pfeiler in Sicht
-        else if (targetMsg_.distance >= 5)
-        {
-            //ROS_INFO("suchen");
-            controllerTwistMsg.linear.x = 0.65;
-            controllerTwistMsg.angular.z = 0.5;
-        }
-        else
-        {
-            controllerTwistMsg.linear.x = 0;
-            controllerTwistMsg.angular.z = 0;
-        }
+    {feedback_.sequence.at(0)+=1;
+        
         
         // check that preempt has not been requested by the client !!!!!!!!!ABBRUCHHH!!!!!!!!!!!!!!!!
       if (as_.isPreemptRequested() || !ros::ok())
@@ -107,8 +78,6 @@ namespace turtlebot_mapping
         break;
       }
 
-    //ROS_INFO("x: %f - z: %f",controllerTwistMsg.linear.x, controllerTwistMsg.angular.z);
-    twistPublisher_.publish(controllerTwistMsg);
     as_.publishFeedback(feedback_);
 
           if (feedback_.sequence.at(0)==goal->order)

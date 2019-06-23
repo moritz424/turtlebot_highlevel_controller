@@ -75,6 +75,11 @@
   <node pkg="turtlebot_highlevel_controller" type="mapping_client" name="mapping_client" output="screen">    
   </node> 
  
+<!-- Keyboardsteuerung mit Teleop Twist -->
+  <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop" output="screen" launch-prefix="terminator -e">
+    <remap from="cmd_vel" to="cmd_vel_mux/input/teleop"/>
+  </node>
+
 
   <!--  ****** Maps *****  -->
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
