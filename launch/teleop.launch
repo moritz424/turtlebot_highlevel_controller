@@ -1,0 +1,9 @@
+<!-- 
+  Turtlebot navigation simulation:
+  - stage
+ -->
+<launch>
+   <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop" output="screen">
+    <remap from="cmd_vel" to="cmd_vel_mux/input/teleop"/>
+  </node>
+</launch>

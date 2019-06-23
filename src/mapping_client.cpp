@@ -102,14 +102,14 @@ int main (int argc, char **argv)
     ROS_WARN("Action_Server State: %s",state.toString().c_str());
 
 
-    char key = getch();
+    /*char key = getch();
 
     if(key  == 'a')
     {
       ROS_INFO("cancel");
       ac.cancelGoal();
       break;
-    }
+    }*/
 
    r.sleep();
   }
