@@ -81,10 +81,10 @@
   </node>
 
 
-  <!--  ****** Maps *****  -->
+  <!--  ****** Maps *****  
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
     <param name="frame_id" value="/map"/>
-  </node>
+  </node>-->
 
    <include file="$(find turtlebot_navigation)/launch/includes/amcl/amcl.launch.xml">
     <arg name="scan_topic" value="scan"/>

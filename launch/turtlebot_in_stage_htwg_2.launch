@@ -8,7 +8,7 @@
   <arg name="3d_sensor"  default="$(optenv TURTLEBOT_3D_SENSOR kinect)"/>  <!-- kinect, asus_xtion_pro -->
 
  <!-- Name of the map to use (without path nor extension) and initial position -->
-<arg name="map_file"       default="$(find turtlebot_highlevel_controller)/maps/apartment.yaml"/>
+<arg name="map_file"       default="$(find turtlebot_highlevel_controller)/maps/map33.yaml"/>
   <arg name="world_file"     default="$(find turtlebot_highlevel_controller)/maps/stage/apartment.world"/>
   <arg name="initial_pose_x" default="2.0"/>
   <arg name="initial_pose_y" default="2.0"/>
@@ -75,10 +75,10 @@
   <node pkg="turtlebot_highlevel_controller" type="mapping_client" name="mapping_client" output="screen">    
   </node> 
  
-  <!--  ****** Maps *****  -->
+  <!--  ****** Maps ***** -->
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
     <param name="frame_id" value="/map"/>
-  </node>
+  </node> 
 
    <include file="$(find turtlebot_navigation)/launch/includes/amcl/amcl.launch.xml">
     <arg name="scan_topic" value="scan"/>
