@@ -49,18 +49,17 @@ protected:
     //! Buffer size of subscriber.
     
     int queueSize_;
-    float kang_;  // Verstaerkungsfaktor p-Regler
+    float kang_;  
     float kvel_;
     geometry_msgs::Twist controllerTwistMsg;
 
-        int minIndex;
+    int minIndex;
     float minAngle;
     float minDist;
 
 public:
 
-  // Our constructor (with a cool initialisation list!)
-  // https://stackoverflow.com/questions/2785612/c-what-does-the-colon-after-a-constructor-mean
+  
   controllerAction(ros::NodeHandle& nodeHandle);
 
   // Destructor
@@ -74,9 +73,6 @@ public:
   void executeCB(const turtlebot_highlevel_controller::controllerGoalConstPtr &goal);
   
 };
-  /*!
-   * Main class for the node to handle the ROS interfacing.
-   */
  
 
 } /* namespace */
